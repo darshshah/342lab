@@ -1,0 +1,11 @@
+1. Eliminated use of 2 registers (r4 and r5) which were used to store the function arguments. Instead, we directly used the registers in which the function arguments were passed. 
+
+2. Instead of counting up and comparing with the dst string length, we used a countdown loop which will count from dst lenght to 0. Hence, we eliminated one compare instruction. 
+
+3. We modified the code to store the keyvalue in src string everytime without a check. Hence we reduced a load and a compare insruction. 
+
+4. We loaded the value from the destination string into the instruction pointer (r12) directly instead of moving it to a local register and copying it to r12. 
+
+5. We removed an additional loop which was used to subtract the ascii value of dst srting with 23 and compare with 22. Now we just used single loop to achieve this. 
+
+
