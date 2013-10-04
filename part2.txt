@@ -1,0 +1,51 @@
+1. Eliminated use of 2 registers (r4 and r5) which were used to store the function arguments. Instead, we directly used the registers in which the function arguments were passed. 
+
+2. Instead of counting up and comparing with the dst string length, we used a countdown loop which will count from dst lenght to 0. Hence, we eliminated one compare instruction. 
+
+3. We modified the code to store the keyvalue in src string everytime without a check. Hence we reduced a load and a compare insruction. 
+
+4. We loaded the value from the destination string into the instruction pointer (r12) directly instead of moving it to a local register and copying it to r12. 
+
+5. We removed an additional loop which was used to subtract the ascii value of dst srting with 23 and compare with 22. Now we just used single loop to achieve this. 
+
+
+STEP-BY-STEP MODIFICATIONS:
+
+Eliminated the use of r4 and r5 in stmfd instruction
+
+subs	r3, r3, #0   @ instead of mov r0, r3; mov r2, #0; and cmp r2,r3;
+
+ble 	.L11	     @instead of bge, we used ble		
+
+sub 	r3, r3, #1   @ we added this instruction as we do a countdown loop. 
+
+ldrb	r12, [r1, r3]	@ eliminated the use of temporary register
+	
+mov	r6,r12          @ eliminated the use of a load instruction
+
+bgt	.L7             @ Instead of using 2 branch instr, we used 1.
+
+strb	r6, [r0, ip]	@ Eliminated the use of 2 load and 1 cmp inst by not checking for similar character.
+
+subs	r3, r3, #1	@ Using countdown loop and so eliminated one cmp instr.
+	
+bpl	.L9		@ To continue until r3 becomes -ve.
+
+ldmfd	sp!, {r6}       @ eliminated the use of 2 registers. 
+
+
+IMPLEMENTATION LOGIC IN A NUTSHELL:
+
+Src=”theinitialstring\n” Srclen=16 bytes
+
+Dst=”PENGUINS” Dstlen=8 bytes
+
+After saving R6, we first check if destination length is 0 and if so we just exit. If not, we subtract the destination length by 1 since a count-down loop is used. 
+
+So now the value of R3 will be 7. Now we load the character from the destination string into R12 and keep a copy of it in R6 also. Hence R6 and R12 will be ‘S’ in this case. 
+
+Then we subtract 23 from R12 until it is less than or equal to 22. Now compare R12 will the length of source string and if greater, just continue to the next character in the destination string. 
+
+If not, replace the corresponding character in the source string with this character in the key. Therefore, we are replacing n with S in the source string. 
+
+This loop is continued until the value of R3 becomes negative (i.e.) all the characters in the destination string are traversed through. Finally, we restore R6 before exiting.
