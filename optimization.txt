@@ -1,3 +1,5 @@
+//Team 13: asp, darshs, ssrisank
+
 1. Eliminated use of 2 registers (r4 and r5) which were used to store the function arguments. Instead, we directly used the registers in which the function arguments were passed. 
 
 2. Instead of counting up and comparing with the dst string length, we used a countdown loop which will count from dst lenght to 0. Hence, we eliminated one compare instruction. 
@@ -36,13 +38,13 @@ ldmfd	sp!, {r6}       @ eliminated the use of 2 registers.
 
 IMPLEMENTATION LOGIC IN A NUTSHELL:
 
-Src=”theinitialstring\n” Srclen=16 bytes
+Src="theinitialstring\n" Srclen=16 bytes
 
-Dst=”PENGUINS” Dstlen=8 bytes
+Dst="PENGUINS" Dstlen=8 bytes
 
 After saving R6, we first check if destination length is 0 and if so we just exit. If not, we subtract the destination length by 1 since a count-down loop is used. 
 
-So now the value of R3 will be 7. Now we load the character from the destination string into R12 and keep a copy of it in R6 also. Hence R6 and R12 will be ‘S’ in this case. 
+So now the value of R3 will be 7. Now we load the character from the destination string into R12 and keep a copy of it in R6 also. Hence R6 and R12 will be 'S' in this case. 
 
 Then we subtract 23 from R12 until it is less than or equal to 22. Now compare R12 will the length of source string and if greater, just continue to the next character in the destination string. 
 
