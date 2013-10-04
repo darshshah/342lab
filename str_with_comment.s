@@ -1,3 +1,12 @@
+@Group No-13
+@Anish Parikh(asp@andrew.cmu.edu)
+@Darsh Shah(darshs@andrew.cmu.edu)
+@Subramaniam Srisankaran (ssrisank@andrew.cmu.edu)
+
+
+
+
+
 	.file	"part1-strTable.c"
 	.text
 	.align	2

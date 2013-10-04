@@ -1,3 +1,12 @@
+/* Group No-13
+   Members:
+	1) Anish Parikh (asp@andrew.cmu.edu)
+	2) Darsh Shah (darshs@andrew.cmu.edu)
+	3) Subramaniam Srisankaran (ssrisank@andrew.cmu.edu)
+*/
+
+
+
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -37,9 +46,13 @@ int oddball(int *arr, int len) {
 #endif
 
 #ifdef OPTIMIZE1
-int oddball(int *arr, int len) {
-	int sum=arr[0]+arr[1],i;
-	int n= (len+1)/2;
+/* We take the sum of all the elements in the array and then subtract
+this sum from twice the sum of elements from 1 to n (n *(n+1)) to get the number
+which occurs only once in the given array */ 
+int oddball(int *arr, int len) 
+{
+	int i,sum=arr[0]+arr[1]; 
+	int n=(len+1)/2; 
 	for(i=2;i<len;i++)
 	{
 		sum+=arr[i];
@@ -49,6 +62,9 @@ int oddball(int *arr, int len) {
 #endif
 
 #ifdef OPTIMIZE2
+/* The first optimization fails in the case where the value of sum exceeds the 
+maximum range of an integer data type. To overcome this we have defined a second method 
+where we use xoring to remove the numbers which occur in pairs and get the required number*/
 int oddball(int *arr, int len) {
 	int xor= arr[0] ^ arr[1],i;
 

@@ -49,3 +49,19 @@ Then we subtract 23 from R12 until it is less than or equal to 22. Now compare R
 If not, replace the corresponding character in the source string with this character in the key. Therefore, we are replacing n with S in the source string. 
 
 This loop is continued until the value of R3 becomes negative (i.e.) all the characters in the destination string are traversed through. Finally, we restore R6 before exiting.
+
+
+INSTRUCTION MEMORY AND RUNTIME COST:
+
+
+	Type     	 Cost
+
+    Instruction	          16
+
+     Load-Store		  18
+
+Conditional- Branch	  42
+
+       Normal		  74
+
+	Total		  334
