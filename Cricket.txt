@@ -1,0 +1,392 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+#define reset 0
+#define set 1
+#define overs 5
+#define wickets 5
+#define impossible 29000
+#define reaction 1500
+#define sleep_time 2000
+void main()
+{
+	int my_team,opp_team,flag=reset, toss = -1 , order = -1, my_score=0 , opp_score=0;
+	char teams[][] = { "Australia", "India", "South Africa", "England" , "Sri Lanka", "West Indies" , "Pakistan" , "New Zealand" };
+	while(flag!=set)
+	{
+		printf("\n Pick your team: 1. Australia 2. India 3. South Africa 4. England 5. Sri Lanka 6. West Indies 7. Pakistan 8. New Zealand:");
+		scanf("%d", &my_team);
+		if(my_team>0 && my_team<9)
+		{
+			flag = set;
+			my_team -= 1;
+		}
+	}
+	flag = reset;
+	while(flag!=set)
+	{
+		printf("\n Pick your opponent: 1. Australia 2. India 3. South Africa 4. England 5. Sri Lanka 6. West Indies 7. Pakistan 8. New Zealand:");
+		scanf("%d", &opp_team);
+		if(opp_team>0 && opp_team<9 && opp_team != my_team)
+		{
+			flag = set;
+			opp_team -= 1;
+		}
+	}
+	check_weather(50);
+	printf("\n Match: %s vs %s",teams[my_team],teams[opp_team]);
+	flag = reset;
+	while(flag !=set)
+	{
+		printf("\n Call the toss: Heads(1) or Tails():");
+		scanf("%d",&toss);
+		toss %= 2;
+		if(toss == 0 || toss == 1)
+		{
+			flag = set;
+		}
+	}
+	flag = reset;
+	if ( ((time()/10) % 2) == toss)
+	{
+		while(flag != set)
+		{
+			printf("\n Great! You won the toss! Do you want to bat(0) or field(1)?");
+			scanf("%d", &order);
+			order %= 2;
+			if(order == 0 || order == 1)
+			{
+				flag = set;	
+				if(order == 0)
+					printf("\n %s chose to bat!\n", teams[my_team]);
+				else
+					printf("\n %s chose to field!\n", teams[my_team]);
+			}
+		}
+	}
+	else
+	{
+		printf("\n You lost the toss!\n");
+		order = (time()/10) % 2;
+		if(order == 0)
+			printf("\n %s chose to field!\n", teams[opp_team]);
+		else
+			printf("\n %s chose to bat!\n", teams[opp_team]);
+	}
+	flag = reset;
+	int x = 0;
+	int target = impossible;
+	while(x < 2)
+	{
+		if (order == 0)
+		{
+			my_score = play(teams[my_team],teams[opp_team], order, overs, wickets, target);
+			target = my_score;
+		}
+		else
+		{
+			opp_score = play(teams[my_team],teams[opp_team], order, overs, wickets, target);
+			target = opp_score;
+		}
+		x++;
+		order = (order == 0)? 1 : 0;
+	}
+	if(my_score > opp_score)
+	{
+		printf("\n Congratulations! %s won!\n", teams[my_team]);
+	}
+	else if(my_score < opp_score)
+	{
+		printf("\n Sorry! You lost! %s won!\n", teams[opp_team]);
+	}
+	else
+	{
+		order = (order == 0)? 1 : 0;
+		superover(teams[my_team],teams[opp_team],order);
+	}
+}
+
+int play(char my_team[], char opp_team[], int order, int overs, int wickets, int target)
+{
+	printf("\n The inning is about to begin!\n");
+	int runs = 0;
+	int wickets_fallen = 0;
+	int balls_bowled = 0;
+	int balls = overs * 6;
+	check_weather(33);
+	if(order == 0)
+	{
+		printf("\n %s about to bat!", my_team);
+		printf("\n RULES : 1. You have %d wickets and %d overs\n
+		2. Everytime you see "PLAY", press a number between 0 to 6 as soon as possible!\n
+		3. If you delay pressing the number or press an invalid number, you lose a wicket!\n
+		Good Luck!\n", wickets, overs);
+	}
+	if(order == 1)
+	{
+		printf("\n %s about to bowl!", my_team);
+		printf("\n RULES : 1. You have %d overs to try to finish off %d wickets\n
+			2. Everytime you see "PLAY", press a number between 0 to 6 as soon as possible!\n
+			3. If you delay pressing the number or press an invalid number, you concede a six off a no ball!\n
+			Good Luck!\n" , overs, wickets);
+	}
+	while(wickets_fallen < wickets && balls_bowled < balls && runs < target)
+	{
+		printf("\n Get ready for ball number : %d!", (balls_bowled+1));
+		sleep(sleep_time);
+		int retired = check_retired(234);
+		if(retired == set)
+		{
+			wickets_fallen++;
+			continue;
+		}
+		int num=-1;
+		check_weather(859);
+		if( target != impossible && balls_bowled > (balls/2) )
+		{
+			duck_worth_lewis(200, runs, balls_bowled, target, my_team, opp_team, order);
+		}
+		int random = give_random();
+		sleep( random * random * 300 );
+		printf("\n Press a number between 0 to 6 and press Enter! Soon!!\n PLAY:");
+		int time1 = time();
+		scanf("%d",&num);
+		int time2 = time();
+		if( (num < 0) || (num > 6) )
+		{
+			printf("\n Invalid key!\n");
+			if(order == 0)
+			{
+				printf("\n You were waving to the audience when the ball was delivered! You lost a wicket! Lame batting!\n");
+				wickets_fallen++; 
+				balls_bowled++;
+				if(balls_bowled % 6 == 0 && balls_bowled > 0)
+				{
+					scorecard(runs, balls_bowled, target);
+				}
+			}
+			else if(order == 1)
+			{
+				printf("\n You conceded a 6 off a no-ball! Lame bowling! \n");
+				runs += 7;
+			}
+			continue;
+		}
+		num = (num + give_random()) % 7;
+		if( (num == give_random()) && (num == give_random()) )
+		{
+			printf("\n It is a no ball!\n");
+			printf("\n %d runs scored off this ball!\n",num);
+			runs += num;
+			continue;
+		}
+		if( (time2 - time1) > reaction)
+		{
+			printf("\n Late reaction! Bowled!\n");
+			wickets_fallen++; 
+			balls_bowled++;
+		}
+		else if( num == 0 )
+		{
+			if( give_random() > 4 )
+			{
+				printf("\n No runs scored off this ball! Good bowling!\n");
+				balls_bowled++;
+			}
+			else
+			{
+				printf("\n Wicket! Caught!\n");
+				wickets_fallen++; 
+				balls_bowled++;
+			}
+		}
+		else if( give_random() == 0 && give_random() == 1)
+		{
+			if(balls_bowled % 2 == 0)
+			{
+				printf("\n Wicket! LBW!\n");
+				wickets_fallen++; 
+				balls_bowled++;
+			}	
+			else
+			{
+				printf("\n Wicket! Run out!\n");
+				num = (num==0)? 0 : (num-1);
+				num = (num>2)? 2 : num;
+				printf("\n %d runs were scored though!\n",num);
+				runs+=num;
+				wickets_fallen++; 
+				balls_bowled++;
+			}
+		}
+		else if( (num == 3) || (num>4) )
+		{
+			if(num == 3)
+			{
+				if (give_random() < 4)
+					num = 3;
+				else
+					num = 2;
+			}
+			else if(num == 5)
+			{
+				if( give_random() < 2 )
+					num = 5;
+				else
+					num = 1;
+			}
+			else if(num == 6)
+			{
+				if( give_random() < 3 )
+					num = 6;
+				else
+					num = 4;
+			}
+			printf("\n %d runs scored off this ball!\n",num);
+			runs += num;
+			balls_bowled++;
+		}
+		else
+		{
+			printf("\n %d runs scored off this ball!\n",num);
+			runs += num;
+			balls_bowled++;
+		}
+		if(balls_bowled % 6 == 0 && balls_bowled > 0)
+		{
+			scorecard(runs, balls_bowled, target);
+		}
+	}
+	if(runs > target)
+	{
+		printf("\n The game has ended! Target achieved! \n");
+		return (impossible+1);
+	}
+	if(wickets_fallen == wickets)
+	{
+		printf("\n All out!\n");
+		printf("\n Total score at the end of the innings is: %d\n",runs);
+	}
+	else if(balls_bowled == balls)
+	{
+		printf("\n The innings is over!\n");
+		printf("\n Total score at the end of the innings is: %d\n",runs);
+	}
+	return runs;
+}
+
+void scorecard(int runs, int balls, int target)
+{
+	int overs_bowled = balls/6;
+	printf("\n SCORECARD: Runs: %d Overs : %d\ n",runs, overs_bowled);
+	if(target != impossible)
+		printf("Target: %d\n", target);
+}
+
+void superover(char my_team[], char opp_team[], int order)
+{
+	int flag = reset;
+	int my_score, opp_score;
+	int target = impossible;
+	while( flag != set )
+	{
+		printf("\n Exciting! Since the scores are tied, we are going to have a super over!\n");
+		int x = 0;
+		while(x < 2)
+		{
+			if (order == 0)
+			{
+				my_score = play(my_team,opp_team, order, 1, 3, target);
+				target = my_score;
+			}
+			else
+			{
+				opp_score = play(my_team,opp_team, order, 1, 3, target);
+				target = opp_score;
+			}
+			x++;
+			order = (order == 0)? 1 : 0;
+		}
+		if(my_score != opp_score)
+			flag = set;
+		else
+		{
+			printf("\n Wow! Tied again! We're in for another superover!\n");
+			check_weather(46);
+		}
+	}	
+	if(my_score > opp_score)
+	{
+		printf("\n Congratulations! %s won!\n", my_team);
+	}
+	else if(my_score < opp_score)
+	{
+		printf("\n Sorry! You lost! %s won!\n", opp_team);
+	}
+}
+
+void check_weather(int num)
+{
+	if( (time()/10) % num == 0 )
+	{
+		printf("\n Oh No! The match has been cancelled due to bad weather! We're sorry! \n");
+		exit(1);
+	}
+}
+
+int check_retired(int num)
+{
+	if( (time()/10) % num == 0 )
+	{
+		printf("\n One of the batsmen has been injured! He cannot continue anymore! One wicket lost! \n");
+		return 1;
+	}
+	return 0;
+}
+
+int give_random()
+{
+	int rand_mod = (time()/10) % 10;
+	int rand = ((time()/10) % 10) * rand_mod;
+	return (rand % 7);
+}
+
+void duck_worth_lewis(int num, int runs, int balls, int target, char my_team[], char opp_team[], int order)
+{
+	if( (time()/10) % num == 0)
+	{
+		printf("\n The match has been interrupted due to rain!\n");
+		printf("\n The result has been announced using the Duckworth Lewis method\n");
+		if( (target / (6 * overs)) > (runs/balls) )
+		{
+			if(order == 0)
+			{
+				printf("\n Sorry! %s lost and %s won!\n",my_team, opp_team);
+				exit(2);
+			}
+			else if(order == 1)
+			{
+				printf("\n Congratulations! %s won!\n",my_team);
+				exit(2);
+			}
+		}
+		else if((target / (6 * overs)) < (runs/balls) )
+		{
+			if(order == 0)
+			{
+				printf("\n Congratulations! %s won!\n",my_team);
+				exit(2);
+			}
+			else if(order == 1)
+			{
+				printf("\n Sorry! %s lost and %s won!\n",my_team, opp_team);
+				exit(2);
+			}
+		}
+		else
+		{
+			printf("\nThe match has been declared a tie and the points have been shared!\n");
+			exit(2);
+		}
+	}
+}
